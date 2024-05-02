@@ -18,7 +18,7 @@ namespace ActivityCalender.DataAccess.Kullanicilar
 
         public async Task<IEnumerable<Kullanici>> KullanicilariGetir(string kullaniciID)
         {
-            return await _context.Kullanicis.AsNoTracking().Where(k => k.Id == kullaniciID).ToListAsync();
+            return await _context.Kullanicis.AsNoTracking().Where(k => k.Id != kullaniciID).ToListAsync();
         }
     }
 }

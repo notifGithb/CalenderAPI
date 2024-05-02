@@ -72,7 +72,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 //};
                 //options.Events = new JwtBearerEvents
                 //{
-                //    OnMessageReceived = context =>
+                //    OnTokenValidated = context =>
                 //    {
                 //        ClaimsIdentity claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
 
@@ -112,7 +112,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 //        return Task.CompletedTask;
                 //    }
                 //};
-                //options.Events = new JwtBearerEvents();   
+                options.Events = new JwtBearerEvents();
             });
 
 builder.Services.AddDbContext<ActivityCalenderContext>();
