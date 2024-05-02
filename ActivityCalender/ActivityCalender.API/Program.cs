@@ -52,13 +52,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     ),
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
                         expires != null ? expires > DateTime.UtcNow : false,
-                   
-                    NameClaimType = ClaimTypes.Name
+
+                    NameClaimType = ClaimTypes.NameIdentifier,
                 };
 
                 //options.Events = new JwtBearerEvents
                 //{
-                //    OnTokenValidated = context =>
+                //    OnMessageReceived = context =>
                 //    {
                 //        var userService = context.HttpContext.RequestServices.GetRequiredService<IKullaniciServisi>();
                 //        var user = userService.KullaniciGetir(context.Principal.Identity.Name);
@@ -112,7 +112,57 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 //        return Task.CompletedTask;
                 //    }
                 //};
-                options.Events = new JwtBearerEvents();
+                //options.Events = new JwtBearerEvents();
+
+
+                //options.Events.OnTokenValidated = async context =>
+                //{
+                //    //ClaimsIdentity claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+
+                //    if (context.Principal.Identity != null && context.Principal.Identity.IsAuthenticated)
+                //    {
+                //        ClaimsIdentity claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+
+                //        if (claimsIdentity.HasClaim(x => x.Type == "kullaniciID"))
+                //        {
+                //            var kullaniciIdClaim = claimsIdentity.FindFirst(x => x.Type == "kullaniciID");
+                //            if (kullaniciIdClaim != null)
+                //            {
+                //                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, kullaniciIdClaim.Value));
+                //            }
+                //            else
+                //            {
+                //              //  throw new Exception("kullaniciID claim not found");
+                //            }
+                //        }
+                //        else
+                //        {
+                //            //throw new Exception("kullaniciID claim not found");
+                //        }
+
+                //        var userName = context.Principal.Identity.Name;
+                //        if (userName != null)
+                //        {
+                //            var userService = context.HttpContext.RequestServices.GetRequiredService<IKullaniciServisi>();
+                //            var kullaniciBilgi = userService.KullaniciGetir(userName);
+
+                //            if (kullaniciBilgi == null)
+                //            {
+                //            //    throw new Exception("Kullanýcý hatasý");
+                //            }
+                //        }
+                //        else
+                //        {
+                //          //  throw new Exception("User name not found");
+                //        }
+                //    }
+                //    else
+                //    {
+                //        //throw new Exception("User not authenticated");
+                //    }
+
+
+                //};
             });
 
 builder.Services.AddDbContext<ActivityCalenderContext>();

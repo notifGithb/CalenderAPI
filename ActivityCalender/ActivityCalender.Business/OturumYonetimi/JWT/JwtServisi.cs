@@ -28,7 +28,7 @@ namespace ActivityCalender.Business.OturumYonetimi.JWT
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, kullanici.Id)
+                new(ClaimTypes.NameIdentifier, kullanici.Id),
             };
             var tokendesc = new SecurityTokenDescriptor
             {
