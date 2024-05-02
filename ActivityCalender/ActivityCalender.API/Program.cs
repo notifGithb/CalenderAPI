@@ -56,7 +56,63 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     NameClaimType = ClaimTypes.Name
                 };
 
-                
+                //options.Events = new JwtBearerEvents
+                //{
+                //    OnTokenValidated = context =>
+                //    {
+                //        var userService = context.HttpContext.RequestServices.GetRequiredService<IKullaniciServisi>();
+                //        var user = userService.KullaniciGetir(context.Principal.Identity.Name);
+                //        if (user == null)
+                //        {
+                //            // return unauthorized if user no longer exists
+                //            context.Fail("Unauthorized");
+                //        }
+                //        return Task.CompletedTask;
+                //    }
+                //};
+                //options.Events = new JwtBearerEvents
+                //{
+                //    OnMessageReceived = context =>
+                //    {
+                //        ClaimsIdentity claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+
+                //        if (claimsIdentity != null && claimsIdentity.IsAuthenticated)
+                //        {
+                //            try
+                //            {
+                //                if (claimsIdentity.HasClaim(x => x.Type == "kullaniciID"))
+
+                //                    claimsIdentity.AddClaim(
+                //                        new Claim(
+                //                            ClaimTypes.Name, claimsIdentity.FindFirst(x => x.Type == "kullaniciID").Value
+                //                        )
+                //                    );
+
+                //                else
+                //                    throw new Exception("Kullanýcý adý hatasý");
+
+                //                var userService = context.HttpContext.RequestServices.GetRequiredService<IKullaniciServisi>();
+                //                var kullaniciBilgi = userService.KullaniciGetir(context.Principal.Identity.Name);
+
+                //                if (kullaniciBilgi == null)
+                //                    throw new Exception("Kullanýcý hatasý");
+                //            }
+                //            catch (Exception)
+                //            {
+
+                //                throw;
+                //            }
+                //        }
+                //        //var accessToken = context.Request.Query["access_token"];
+                //        //var path = context.HttpContext.Request.Path;
+                //        //if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/message")))
+                //        //{
+                //        //    context.Token = accessToken;
+                //        //}
+                //        return Task.CompletedTask;
+                //    }
+                //};
+                //options.Events = new JwtBearerEvents();   
             });
 
 builder.Services.AddDbContext<ActivityCalenderContext>();
