@@ -20,11 +20,11 @@ namespace ActivityCalender.API.Controllers
         [HttpGet]
         public async Task<IActionResult> MevcutKullaniciGetir()
         {
-            string? kullaniciID = User.Identity?.Name;
+            string? mevcutKullaniciID = User.Identity?.Name;
 
-            if (kullaniciID == null) return Unauthorized();
+            if (mevcutKullaniciID == null) return Unauthorized();
 
-            KullaniciGetirDTO? kullanici = await _kullaniciServisi.KullaniciGetir(kullaniciID);
+            KullaniciGetirDTO? kullanici = await _kullaniciServisi.KullaniciGetir(mevcutKullaniciID);
 
             if (kullanici != null)
             {
@@ -36,7 +36,11 @@ namespace ActivityCalender.API.Controllers
         [HttpGet]
         public async Task<IActionResult> KullanicilariGetir()
         {
-            IEnumerable<KullaniciGetirDTO>? kullanicilar = await _kullaniciServisi.KullanicilariGetir();
+            string? mevcutKullaniciID = User.Identity?.Name;
+
+            if (mevcutKullaniciID == null) return Unauthorized();
+
+            IEnumerable<KullaniciGetirDTO>? kullanicilar = await _kullaniciServisi.KullanicilariGetir(mevcutKullaniciID);
 
             if (kullanicilar.Any())
             {

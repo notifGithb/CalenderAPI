@@ -1,5 +1,6 @@
 ﻿using ActivityCalender.Business.Etkinlikler;
 using ActivityCalender.Business.Etkinlikler.DTOs;
+using ActivityCalender.Business.Kullanicilar.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,8 +62,10 @@ namespace ActivityCalender.API.Controllers
             string? mevcutKullaniciID = User.Identity?.Name;
             if (mevcutKullaniciID == null) return Unauthorized();
 
-            await _etkinlikServisi.EtkinlikKullanicilariGetir(etkinlikID, mevcutKullaniciID);
-            return Ok();
+            IEnumerable<KullaniciGetirDTO> kullanicilar = await _etkinlikServisi.EtkinlikKullanicilariGetir(etkinlikID, mevcutKullaniciID);
+            if (kullanicilar == null) return NotFound();
+
+            return Ok(kullanicilar);
         }
 
         [HttpDelete("{etkinlikID}")]

@@ -5,7 +5,7 @@ namespace ActivityCalender.DataAccess.Kullanicilar
     public interface IKullaniciRepository
     {
         Task<Kullanici?> KullaniciGetir(string kullaniciID);
-        Task<IEnumerable<Kullanici>> KullanicilariGetir();
+        Task<IEnumerable<Kullanici>> KullanicilariGetir(string kullaniciID);
 
     }
 }

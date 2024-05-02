@@ -6,6 +6,6 @@ namespace ActivityCalender.Business.Kullanicilar
     {
         Task<KullaniciGetirDTO?> KullaniciGetir(string kullaniciID);
 
-        Task<IEnumerable<KullaniciGetirDTO>> KullanicilariGetir();
+        Task<IEnumerable<KullaniciGetirDTO>> KullanicilariGetir(string kullaniciID);
     }
 }

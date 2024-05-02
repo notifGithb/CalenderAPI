@@ -30,8 +30,8 @@ builder.Services.AddScoped<IKullaniciEtkinlikRepositroy, KullaniciEtkinlikReposi
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder
-            .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
@@ -52,24 +52,11 @@ builder
                     ),
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
                         expires != null ? expires > DateTime.UtcNow : false,
-
+                   
                     NameClaimType = ClaimTypes.Name
                 };
 
-                //options.Events = new JwtBearerEvents
-                //{
-                //    OnMessageReceived = context =>
-                //    {
-                //        var accessToken = context.Request.Query["access_token"];
-                //        var path = context.HttpContext.Request.Path;
-                //        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/message")))
-                //        {
-                //            context.Token = accessToken;
-                //        }
-                //        return Task.CompletedTask;
-                //    }
-                //};
-                //options.Events = new JwtBearerEvents();   
+                
             });
 
 builder.Services.AddDbContext<ActivityCalenderContext>();

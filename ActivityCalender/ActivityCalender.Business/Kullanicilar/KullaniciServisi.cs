@@ -21,9 +21,9 @@ namespace ActivityCalender.Business.Kullanicilar
             return _mapper.Map<KullaniciGetirDTO>(await _kullaniciRepository.KullaniciGetir(kullaniciID));
         }
 
-        public async Task<IEnumerable<KullaniciGetirDTO>> KullanicilariGetir()
+        public async Task<IEnumerable<KullaniciGetirDTO>> KullanicilariGetir(string kullaniciID)
         {
-            return _mapper.Map<IEnumerable<KullaniciGetirDTO>>(await _kullaniciRepository.KullanicilariGetir());
+            return _mapper.Map<IEnumerable<KullaniciGetirDTO>>(await _kullaniciRepository.KullanicilariGetir(string kullaniciID));
         }
     }
 }
