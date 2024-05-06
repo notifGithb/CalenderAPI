@@ -71,7 +71,6 @@ namespace ActivityCalender.Business.OturumYonetimi
                 var byteArray = Encoding.Default.GetBytes(yeniKullanici.KullaniciSifresi);
                 var hashedSifre = Convert.ToBase64String(sha.ComputeHash(byteArray));
 
-                yeniKullanici.Id = Guid.NewGuid().ToString();
                 yeniKullanici.KullaniciSifresi = hashedSifre;
                 await _context.Kullanicis.AddAsync(yeniKullanici);
                 await _context.SaveChangesAsync();

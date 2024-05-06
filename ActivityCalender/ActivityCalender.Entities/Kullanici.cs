@@ -6,6 +6,7 @@ namespace ActivityCalender.Entities
     {
         public Kullanici()
         {
+            Id = Guid.NewGuid().ToString();
             OlusturduguEtkinlikler = new HashSet<Etkinlik>();
             KatildigiEtkinlikler = new HashSet<KullaniciEtkinlik>();
         }
@@ -16,7 +17,7 @@ namespace ActivityCalender.Entities
         public required string Soyisim { get; set; }
         public required string KullaniciSifresi { get; set; }
 
-        public ICollection<Etkinlik> OlusturduguEtkinlikler { get; set; } 
+        public ICollection<Etkinlik> OlusturduguEtkinlikler { get; set; }
         public ICollection<KullaniciEtkinlik> KatildigiEtkinlikler { get; set; }
 
     }
