@@ -42,7 +42,7 @@ namespace ActivityCalender.Business.Etkinlikler
                 }
                 else
                 {
-                    throw new Exception();
+                    throw new Exception("Tarih ve Zaman Bilgileri Doğrulanamadı.");
                 }
             }
             catch (Exception)
