@@ -31,6 +31,7 @@ namespace ActivityCalender.API.Controllers
             return Ok();
         }
 
+
         [HttpPost]
         public async Task<IActionResult> EtkinligeKullaniciEkle([FromBody] EtkinlikKullaniciEkleDTO etkinlikKullaniciEkleDTO)
         {
@@ -56,6 +57,7 @@ namespace ActivityCalender.API.Controllers
             return Ok();
         }
 
+
         [HttpGet("{etkinlikID}")]
         public async Task<IActionResult> EtkinlikKullanicilariGetir(int etkinlikID)
         {
@@ -67,6 +69,7 @@ namespace ActivityCalender.API.Controllers
 
             return Ok(kullanicilar);
         }
+
 
         [HttpDelete("{etkinlikID}")]
         public async Task<IActionResult> EtkinlikSil(int etkinlikID)
@@ -119,6 +122,7 @@ namespace ActivityCalender.API.Controllers
 
             return Ok(etkinlikler);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> EklenenEtkinlikleriGetir()

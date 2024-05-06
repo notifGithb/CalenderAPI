@@ -14,7 +14,11 @@ namespace ActivityCalender.Business.Etkinlikler
         private readonly IKullaniciEtkinlikRepositroy _kullaniciEtkinlikRepositroy;
         private readonly IMapper _mapper;
 
-        public EtkinlikServisi(IEtkinlikRepository etkinlikRepository, IKullaniciRepository kullaniciRepository, IKullaniciEtkinlikRepositroy kullaniciEtkinlikRepositroy, IMapper mapper)
+        public EtkinlikServisi(
+            IEtkinlikRepository etkinlikRepository, 
+            IKullaniciRepository kullaniciRepository, 
+            IKullaniciEtkinlikRepositroy kullaniciEtkinlikRepositroy, 
+            IMapper mapper)
         {
             _etkinlikRepository = etkinlikRepository;
             _kullaniciRepository = kullaniciRepository;

@@ -17,6 +17,7 @@ namespace ActivityCalender.API.Controllers
             _kullaniciServisi = kullaniciServisi;
         }
 
+
         [HttpGet]
         public async Task<IActionResult> MevcutKullaniciGetir()
         {
@@ -32,6 +33,7 @@ namespace ActivityCalender.API.Controllers
             }
             return NotFound();
         }
+
 
         [HttpGet]
         public async Task<IActionResult> KullanicilariGetir()

@@ -40,6 +40,10 @@ namespace ActivityCalender.DataAccess
                     .HasForeignKey(e => e.KullaniciId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
+
+            //composite keys
+            modelBuilder.Entity<KullaniciEtkinlik>().HasKey(e => new { e.KullaniciId, e.EtkinlikId });
+
             modelBuilder.Entity<KullaniciEtkinlik>(entity =>
             {
                 entity.HasOne(e => e.Kullanici)

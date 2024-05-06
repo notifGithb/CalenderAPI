@@ -55,8 +55,8 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             if (!mevcutEtkinlikler.Any()) return false;
 
             bool gecerli = mevcutEtkinlikler.Any(e =>
-                DateTime.Parse(e.BaslangicTarihi + " " + e.BaslangicSaati) <= yeniBitisTarihi &&
-                yeniBaslangicTarihi <= DateTime.Parse(e.BitisTarihi + " " + e.BitisSaati)
+                DateTime.Parse(e.BaslangicTarihi + " " + e.BaslangicSaati) < yeniBitisTarihi &&
+                yeniBaslangicTarihi < DateTime.Parse(e.BitisTarihi + " " + e.BitisSaati)
             );
 
             return gecerli;

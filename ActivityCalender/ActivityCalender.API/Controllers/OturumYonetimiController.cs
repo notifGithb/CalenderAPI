@@ -17,6 +17,7 @@ namespace ActivityCalender.API.Controllers
             _oturumYonetimi = oturumYonetimi;
         }
 
+
         [HttpPost]
         public async Task<IActionResult> KayitOl([FromBody] KullaniciKayitDto model)
         {
