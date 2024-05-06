@@ -35,17 +35,29 @@ namespace ActivityCalender.DataAccess.Etkinlikler
 
         public async Task<IEnumerable<Kullanici>> EtkinlikKullanicilariGetir(int etkinlikID)
         {
-            return await _context.KullaniciEtkinliks.AsNoTracking().Where(e => e.EtkinlikId == etkinlikID).Select(e => e.Kullanici).ToListAsync();
+            return await _context.KullaniciEtkinliks
+                .Where(e => e.EtkinlikId == etkinlikID)
+                .Select(e => e.Kullanici)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<KullaniciEtkinlik?> EtkinlikKullaniciGetir(int etkinlikID, string kullaniciID)
         {
-            return await _context.KullaniciEtkinliks.AsNoTracking().Where(e => e.EtkinlikId == etkinlikID && e.KullaniciId == kullaniciID).FirstOrDefaultAsync();
+            return await _context.KullaniciEtkinliks
+                .Where(e => e.EtkinlikId == etkinlikID && e.KullaniciId == kullaniciID)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Etkinlik>> EklenenEtkinlikleriGetir(string mevcutKullaniciID)
         {
-            return await _context.KullaniciEtkinliks.AsNoTracking().Where(e => e.KullaniciId == mevcutKullaniciID).Select(e => e.Etkinlik).ToListAsync();
+            return await _context.KullaniciEtkinliks
+                .Where(e => e.KullaniciId == mevcutKullaniciID)
+                .Include(e => e.Etkinlik.OlusturanKullanici)
+                .Select(e => e.Etkinlik)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

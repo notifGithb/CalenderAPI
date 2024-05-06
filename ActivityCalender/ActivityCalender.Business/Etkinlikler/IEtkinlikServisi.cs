@@ -14,6 +14,6 @@ namespace ActivityCalender.Business.Etkinlikler
         Task EtkinliktenKullaniciSil(EtkinliktenKullaniciSilDTO etkinliktenKullaniciSilDTO, string mevcutKullaniciID);
         Task<IEnumerable<KullaniciGetirDTO>> EtkinlikKullanicilariGetir(int etkinlikID, string mevcutKullaniciID);
 
-        Task<IEnumerable<EtkinlikGetirDTO>> EklenenEtkinlikleriGetir(string mevcutKullaniciID);
+        Task<IEnumerable<EklenenEtkinlikleriGetirDTO>> EklenenEtkinlikleriGetir(string mevcutKullaniciID);
     }
 }

@@ -17,6 +17,9 @@ namespace ActivityCalender.Business.Mapper
             CreateMap<Etkinlik, EtkinlikOlusturDTO>().ReverseMap();
             CreateMap<Etkinlik, EtkinlikGuncelleDTO>().ReverseMap();
             CreateMap<Etkinlik, EtkinlikGetirDTO>().ReverseMap();
+            CreateMap<Etkinlik, EklenenEtkinlikleriGetirDTO>()
+                .ForMember(dest => dest.EkleyenKullaniciId, opt => opt.MapFrom(src => src.OlusturanKullaniciId))
+                .ForMember(dest => dest.EkleyenKullaniciAdi, opt => opt.MapFrom(src => src.OlusturanKullanici.KullaniciAdi));
         }
     }
 }

@@ -126,7 +126,7 @@ namespace ActivityCalender.API.Controllers
             string? mevcutKullaniciID = User.Identity?.Name;
             if (mevcutKullaniciID == null) return Unauthorized();
 
-            IEnumerable<EtkinlikGetirDTO> etkinlikler = await _etkinlikServisi.EklenenEtkinlikleriGetir(mevcutKullaniciID);
+            IEnumerable<EklenenEtkinlikleriGetirDTO> etkinlikler = await _etkinlikServisi.EklenenEtkinlikleriGetir(mevcutKullaniciID);
 
             if (!etkinlikler.Any()) return NotFound();
 

@@ -177,9 +177,9 @@ namespace ActivityCalender.Business.Etkinlikler
             }
         }
 
-        public async Task<IEnumerable<EtkinlikGetirDTO>> EklenenEtkinlikleriGetir(string mevcutKullaniciID)
+        public async Task<IEnumerable<EklenenEtkinlikleriGetirDTO>> EklenenEtkinlikleriGetir(string mevcutKullaniciID)
         {
-            return _mapper.Map<IEnumerable<EtkinlikGetirDTO>>(await _kullaniciEtkinlikRepositroy.EklenenEtkinlikleriGetir(mevcutKullaniciID));
+            return _mapper.Map<IEnumerable<EklenenEtkinlikleriGetirDTO>>(await _kullaniciEtkinlikRepositroy.EklenenEtkinlikleriGetir(mevcutKullaniciID));
         }
         private static bool TarihDogrula(string baslangicTarihi, string baslangicSaati, string bitisTarihi, string bitisSaati)
         {
