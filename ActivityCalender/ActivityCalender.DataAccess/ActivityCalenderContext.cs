@@ -59,7 +59,7 @@ namespace ActivityCalender.DataAccess
 
             modelBuilder.Entity<Etkinlik>(entity =>
             {
-                entity.HasOne(e => e.OlusturanKullanici)
+                entity.HasOne(e => e.OlusturanKullanici) 
                     .WithMany(e => e.OlusturduguEtkinlikler)
                     .HasForeignKey(e => e.OlusturanKullaniciId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
