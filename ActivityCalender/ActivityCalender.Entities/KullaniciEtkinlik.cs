@@ -2,7 +2,7 @@
 
 namespace ActivityCalender.Entities
 {
-    public class KullaniciEtkinlik
+    public sealed class KullaniciEtkinlik
     {
         public int EtkinlikId { get; set; }
         public Etkinlik Etkinlik { get; set; }

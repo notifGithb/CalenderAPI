@@ -97,12 +97,12 @@ namespace ActivityCalender.API.Controllers
 
 
         [HttpGet("{etkinlikID}")]
-        public async Task<IActionResult> EtkinlikGetir(int etkinlikID)
+        public async Task<IActionResult> KullaniciEtkinligiGetir(int etkinlikID)
         {
             string? mevcutKullaniciID = User.Identity?.Name;
             if (mevcutKullaniciID == null) return Unauthorized();
 
-            EtkinlikGetirDTO? etkinlik = await _etkinlikServisi.EtkinlikGetir(mevcutKullaniciID, etkinlikID);
+            EtkinlikGetirDTO? etkinlik = await _etkinlikServisi.KullaniciEtkinligiGetir(mevcutKullaniciID, etkinlikID);
 
             if (etkinlik == null) return NotFound();
 

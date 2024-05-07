@@ -6,6 +6,8 @@ using ActivityCalender.Business.OturumYonetimi.JWT;
 using ActivityCalender.DataAccess;
 using ActivityCalender.DataAccess.Etkinlikler;
 using ActivityCalender.DataAccess.Kullanicilar;
+using ActivityCalender.DataAccess.Repository;
+using ActivityCalender.DataAccess.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -30,6 +32,8 @@ builder.Services.AddScoped<IKullaniciServisi, KullaniciServisi>();
 builder.Services.AddScoped<IEtkinlikRepository, EtkinlikRepository>();
 builder.Services.AddScoped<IEtkinlikServisi, EtkinlikServisi>();
 builder.Services.AddScoped<IKullaniciEtkinlikRepositroy, KullaniciEtkinlikRepositroy>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

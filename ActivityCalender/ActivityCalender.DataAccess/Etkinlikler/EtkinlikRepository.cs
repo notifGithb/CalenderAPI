@@ -1,16 +1,18 @@
-﻿using ActivityCalender.Entities;
+﻿using ActivityCalender.DataAccess.Repository;
+using ActivityCalender.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace ActivityCalender.DataAccess.Etkinlikler
 {
-    public class EtkinlikRepository : IEtkinlikRepository
+    public class EtkinlikRepository : GenericRepository<Etkinlik>, IEtkinlikRepository
     {
         private readonly ActivityCalenderContext _context;
-        public EtkinlikRepository(ActivityCalenderContext context)
+
+        public EtkinlikRepository(ActivityCalenderContext context) : base(context)
         {
             _context = context;
         }
-
 
         public async Task EtkinlikOlustur(Etkinlik etkinlik)
         {
@@ -30,36 +32,30 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Etkinlik?> EtkinlikGetir(string kullaniciID, int etkinlikID)
-        {
-            return await _context.Etkinliks
-                .AsNoTracking()
-                .Where(e => e.OlusturanKullaniciId == kullaniciID && e.Id == etkinlikID)
-                .FirstOrDefaultAsync();
-        }
 
         public async Task<IEnumerable<Etkinlik>> KullaniciEtkinlikleriGetir(string kullaniciID)
         {
             return await _context.Etkinliks
                 .AsNoTracking()
                 .Where(e => e.OlusturanKullaniciId == kullaniciID)
+                .OrderBy(e => DateTime.Parse(e.BaslangicTarihi))
                 .ToListAsync();
         }
 
-        public async Task<Etkinlik?> KullaniciEtkinlikGetir(int etkinlikID, string kullaniciID)
+        public async Task<Etkinlik?> KullaniciEtkinligiGetir(int etkinlikID, string kullaniciID)
         {
             return await _context.Etkinliks
                 .AsNoTracking()
                 .Where(e => e.Id == etkinlikID && e.OlusturanKullaniciId == kullaniciID)
-                .OrderBy(e => e.BaslangicTarihi)
                 .FirstOrDefaultAsync();
         }
 
         //Yeni eklenecek etkinliğin saaat aralığının daha önce eklenen bir etkinlikle çakışıp çakışmadığı kontrol edilir. Çakışırsa true çakışmazsa false döner.
         public async Task<bool> EtkinlikTarihKontrol(Etkinlik etkinlik)
         {
-            DateTime yeniBaslangicTarihi = DateTime.Parse(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati);
-            DateTime yeniBitisTarihi = DateTime.Parse(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati);
+
+            DateTime yeniBaslangicTarihi = DateTime.ParseExact(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            DateTime yeniBitisTarihi = DateTime.ParseExact(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
 
             var mevcutEtkinlikler = await _context.Etkinliks.AsNoTracking().Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId).ToListAsync();
 
@@ -68,8 +64,8 @@ namespace ActivityCalender.DataAccess.Etkinlikler
 
             //Veritabanına kayıtlı etkinlikler arasında yeni eklenecek etkinlikle aynı zaman dilimine ait etkinlik olup olmadığı kontrol edilirx.
             bool gecerli = mevcutEtkinlikler.Any(e =>
-                DateTime.Parse(e.BaslangicTarihi + " " + e.BaslangicSaati) < yeniBitisTarihi &&
-                yeniBaslangicTarihi < DateTime.Parse(e.BitisTarihi + " " + e.BitisSaati)
+                DateTime.ParseExact(e.BaslangicTarihi + " " + e.BaslangicSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) < yeniBitisTarihi &&
+                yeniBaslangicTarihi < DateTime.ParseExact(e.BitisTarihi + " " + e.BitisSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture)
             );
 
             return gecerli;

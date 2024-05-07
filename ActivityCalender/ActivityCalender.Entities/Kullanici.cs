@@ -2,7 +2,7 @@
 
 namespace ActivityCalender.Entities
 {
-    public class Kullanici
+    public sealed class Kullanici
     {
         public Kullanici()
         {

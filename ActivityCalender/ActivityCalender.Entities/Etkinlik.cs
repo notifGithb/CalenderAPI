@@ -2,7 +2,7 @@
 
 namespace ActivityCalender.Entities
 {
-    public class Etkinlik
+    public sealed class Etkinlik
     {
         public Etkinlik()
         {

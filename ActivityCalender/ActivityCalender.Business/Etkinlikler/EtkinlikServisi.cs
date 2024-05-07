@@ -2,8 +2,10 @@
 using ActivityCalender.Business.Kullanicilar.DTOs;
 using ActivityCalender.DataAccess.Etkinlikler;
 using ActivityCalender.DataAccess.Kullanicilar;
+using ActivityCalender.DataAccess.UnitOfWork;
 using ActivityCalender.Entities;
 using AutoMapper;
+using System.Globalization;
 
 namespace ActivityCalender.Business.Etkinlikler
 {
@@ -13,17 +15,20 @@ namespace ActivityCalender.Business.Etkinlikler
         private readonly IKullaniciRepository _kullaniciRepository;
         private readonly IKullaniciEtkinlikRepositroy _kullaniciEtkinlikRepositroy;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public EtkinlikServisi(
-            IEtkinlikRepository etkinlikRepository, 
-            IKullaniciRepository kullaniciRepository, 
-            IKullaniciEtkinlikRepositroy kullaniciEtkinlikRepositroy, 
-            IMapper mapper)
+            IEtkinlikRepository etkinlikRepository,
+            IKullaniciRepository kullaniciRepository,
+            IKullaniciEtkinlikRepositroy kullaniciEtkinlikRepositroy,
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _etkinlikRepository = etkinlikRepository;
             _kullaniciRepository = kullaniciRepository;
             _kullaniciEtkinlikRepositroy = kullaniciEtkinlikRepositroy;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -33,7 +38,7 @@ namespace ActivityCalender.Business.Etkinlikler
             {
                 if (TarihDogrula(etkinlikOlusturDTO.BaslangicTarihi, etkinlikOlusturDTO.BaslangicSaati, etkinlikOlusturDTO.BitisTarihi, etkinlikOlusturDTO.BitisSaati))
                 {
-                    Etkinlik? etkinlikOlustur = _mapper.Map<Etkinlik>(etkinlikOlusturDTO);
+                    Etkinlik etkinlikOlustur = _mapper.Map<Etkinlik>(etkinlikOlusturDTO);
                     etkinlikOlustur.OlusturanKullaniciId = mevcutKullaniciID;
 
                     if (await _etkinlikRepository.EtkinlikTarihKontrol(etkinlikOlustur)) throw new Exception("Girilen Tarih Araliginda Etkinlik Kaydi Bulunmaktadir.");
@@ -56,7 +61,7 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                Etkinlik? etkinlikSil = await _etkinlikRepository.KullaniciEtkinlikGetir(etkinlikID, mevcutKullaniciID);
+                Etkinlik? etkinlikSil = await _etkinlikRepository.KullaniciEtkinligiGetir(etkinlikID, mevcutKullaniciID);
 
                 if (etkinlikSil == null) throw new Exception("Kullanıcını Silinecek Etkinlik Kaydı Bulunamadı.");
 
@@ -74,13 +79,14 @@ namespace ActivityCalender.Business.Etkinlikler
             {
                 if (TarihDogrula(etkinlikGuncelleDTO.BaslangicTarihi, etkinlikGuncelleDTO.BaslangicSaati, etkinlikGuncelleDTO.BitisTarihi, etkinlikGuncelleDTO.BitisSaati))
                 {
-                    Etkinlik? etkinlik = await _etkinlikRepository.KullaniciEtkinlikGetir(etkinlikGuncelleDTO.Id, mevcutKullaniciID);
+                    Etkinlik? etkinlik = await _etkinlikRepository.KullaniciEtkinligiGetir(etkinlikGuncelleDTO.Id, mevcutKullaniciID);
                     if (etkinlik == null) throw new Exception("Guncellenecek Etkinlik Kaydi Bulunamadi.");
 
-                    Etkinlik? etkinlikGuncelle = _mapper.Map<Etkinlik>(etkinlikGuncelleDTO);
-
-
+                    Etkinlik etkinlikGuncelle = _mapper.Map<Etkinlik>(etkinlikGuncelleDTO);
                     etkinlikGuncelle.OlusturanKullaniciId = mevcutKullaniciID;
+
+                    if (await _etkinlikRepository.EtkinlikTarihKontrol(etkinlikGuncelle)) throw new Exception("Girilen Tarih Araliginda Etkinlik Kaydi Bulunmaktadir.");
+
                     await _etkinlikRepository.EtkinlikGuncelle(etkinlikGuncelle);
                 }
                 else
@@ -94,9 +100,9 @@ namespace ActivityCalender.Business.Etkinlikler
             }
         }
 
-        public async Task<EtkinlikGetirDTO?> EtkinlikGetir(string mevcutKullaniciID, int etkinlikID)
+        public async Task<EtkinlikGetirDTO?> KullaniciEtkinligiGetir(string mevcutKullaniciID, int etkinlikID)
         {
-            return _mapper.Map<EtkinlikGetirDTO>(await _etkinlikRepository.EtkinlikGetir(mevcutKullaniciID, etkinlikID));
+            return _mapper.Map<EtkinlikGetirDTO>(await _etkinlikRepository.KullaniciEtkinligiGetir(etkinlikID, mevcutKullaniciID));
         }
 
         public async Task<IEnumerable<EtkinlikGetirDTO>> KullaniciEtkinlikleriGetir(string mevcutKullaniciID)
@@ -110,7 +116,7 @@ namespace ActivityCalender.Business.Etkinlikler
             {
                 List<KullaniciEtkinlik> kullaniciEtkinlikListesi = new();
 
-                if (await _etkinlikRepository.KullaniciEtkinlikGetir(etkinlikKullaniciEkleDTO.EtkinlikId, mevcutKullaniciID) != null)
+                if (await _etkinlikRepository.KullaniciEtkinligiGetir(etkinlikKullaniciEkleDTO.EtkinlikId, mevcutKullaniciID) != null)
                 {
                     foreach (var KullaniciId in etkinlikKullaniciEkleDTO.KullaniciIds)
                     {
@@ -141,7 +147,7 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                if (await _etkinlikRepository.KullaniciEtkinlikGetir(etkinliktenKullaniciSilDTO.EtkinlikID, mevcutKullaniciID) != null)
+                if (await _etkinlikRepository.KullaniciEtkinligiGetir(etkinliktenKullaniciSilDTO.EtkinlikID, mevcutKullaniciID) != null)
                 {
                     List<KullaniciEtkinlik> kullaniciEtkinlikListesi = new();
                     foreach (var kullaniciId in etkinliktenKullaniciSilDTO.KullaniciIDs)
@@ -166,7 +172,7 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                if (await _etkinlikRepository.KullaniciEtkinlikGetir(etkinlikID, mevcutKullaniciID) != null)
+                if (await _etkinlikRepository.KullaniciEtkinligiGetir(etkinlikID, mevcutKullaniciID) != null)
                 {
                     return _mapper.Map<IEnumerable<KullaniciGetirDTO>>(await _kullaniciEtkinlikRepositroy.EtkinlikKullanicilariGetir(etkinlikID));
                 }
@@ -187,13 +193,12 @@ namespace ActivityCalender.Business.Etkinlikler
         }
         private static bool TarihDogrula(string baslangicTarihi, string baslangicSaati, string bitisTarihi, string bitisSaati)
         {
-            string baslangıc = $"{baslangicTarihi} {baslangicSaati}";
+            string baslangic = $"{baslangicTarihi} {baslangicSaati}";
             string bitis = $"{bitisTarihi} {bitisSaati}";
 
-
-            if (DateTime.TryParse(baslangıc, out _) && DateTime.TryParse(bitis, out _))
+            if (DateTime.TryParse(baslangic, out _) && DateTime.TryParse(bitis, out _))
             {
-                if (DateTime.Parse(baslangıc) < DateTime.Parse(bitis))
+                if (DateTime.ParseExact(baslangic, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) < DateTime.ParseExact(bitis, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture))
                 {
                     return true;
                 }
