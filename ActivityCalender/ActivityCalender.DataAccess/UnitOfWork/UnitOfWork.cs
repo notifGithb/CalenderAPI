@@ -17,7 +17,7 @@ namespace ActivityCalender.DataAccess.UnitOfWork
         public void Dispose()
         {
             _context.Dispose();
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
 
         public async Task SaveChangesAsync()

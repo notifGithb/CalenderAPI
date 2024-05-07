@@ -38,7 +38,6 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             return await _context.Etkinliks
                 .AsNoTracking()
                 .Where(e => e.OlusturanKullaniciId == kullaniciID)
-                .OrderBy(e => DateTime.Parse(e.BaslangicTarihi))
                 .ToListAsync();
         }
 
