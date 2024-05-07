@@ -13,7 +13,6 @@ namespace ActivityCalender.Business.Kullanicilar
         {
             _kullaniciRepository = kullaniciRepository;
             _mapper = mapper;
-
         }
 
         public async Task<KullaniciGetirDTO?> KullaniciGetir(string kullaniciID)

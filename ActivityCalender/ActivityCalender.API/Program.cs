@@ -6,7 +6,6 @@ using ActivityCalender.Business.OturumYonetimi.JWT;
 using ActivityCalender.DataAccess;
 using ActivityCalender.DataAccess.Etkinlikler;
 using ActivityCalender.DataAccess.Kullanicilar;
-using ActivityCalender.DataAccess.Repository;
 using ActivityCalender.DataAccess.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

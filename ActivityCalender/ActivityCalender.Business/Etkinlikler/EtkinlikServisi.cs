@@ -143,7 +143,7 @@ namespace ActivityCalender.Business.Etkinlikler
             }
         }
 
-        public async Task EtkinliktenKullaniciSil(EtkinliktenKullaniciSilDTO etkinliktenKullaniciSilDTO, string mevcutKullaniciID)
+        public async Task EtkinliktenDavetliKullanicilariSil(EtkinliktenKullaniciSilDTO etkinliktenKullaniciSilDTO, string mevcutKullaniciID)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace ActivityCalender.Business.Etkinlikler
                             kullaniciEtkinlikListesi.Add(kullaniciEtkinlik);
                         }
                     }
-                    await _kullaniciEtkinlikRepositroy.KullaniciEtkinlikleriSil(kullaniciEtkinlikListesi);
+                    await _kullaniciEtkinlikRepositroy.EtkinliktenDavetliKullanicilariSil(kullaniciEtkinlikListesi);
                 }
                 else { throw new Exception("Kullanıcını Kayıtlı Etkinliği Bulunamadı."); }
             }
@@ -168,13 +168,13 @@ namespace ActivityCalender.Business.Etkinlikler
             }
         }
 
-        public async Task<IEnumerable<KullaniciGetirDTO>> EtkinlikKullanicilariGetir(int etkinlikID, string mevcutKullaniciID)
+        public async Task<IEnumerable<KullaniciGetirDTO>> EtkinligeDavetliKullanicilariGetir(int etkinlikID, string mevcutKullaniciID)
         {
             try
             {
                 if (await _etkinlikRepository.KullaniciEtkinligiGetir(etkinlikID, mevcutKullaniciID) != null)
                 {
-                    return _mapper.Map<IEnumerable<KullaniciGetirDTO>>(await _kullaniciEtkinlikRepositroy.EtkinlikKullanicilariGetir(etkinlikID));
+                    return _mapper.Map<IEnumerable<KullaniciGetirDTO>>(await _kullaniciEtkinlikRepositroy.EtkinligeDavetliKullanicilariGetir(etkinlikID));
                 }
                 else
                 {

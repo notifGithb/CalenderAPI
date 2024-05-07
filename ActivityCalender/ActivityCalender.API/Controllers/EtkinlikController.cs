@@ -32,42 +32,17 @@ namespace ActivityCalender.API.Controllers
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> EtkinligeKullaniciEkle([FromBody] EtkinlikKullaniciEkleDTO etkinlikKullaniciEkleDTO)
+        [HttpPut]
+        public async Task<IActionResult> EtkinlikGuncelle([FromBody] EtkinlikGuncelleDTO etkinlikGuncelleDTO)
         {
             string? mevcutKullaniciID = User.Identity?.Name;
             if (mevcutKullaniciID == null) return Unauthorized();
 
-            if (etkinlikKullaniciEkleDTO == null) return BadRequest();
+            if (etkinlikGuncelleDTO == null) return BadRequest();
 
-            await _etkinlikServisi.EtkinligeKullaniciEkle(etkinlikKullaniciEkleDTO, mevcutKullaniciID);
+            await _etkinlikServisi.EtkinlikGuncelle(etkinlikGuncelleDTO, mevcutKullaniciID);
+
             return Ok();
-        }
-
-
-        [HttpDelete]
-        public async Task<IActionResult> EtkinliktenKullaniciSil([FromBody] EtkinliktenKullaniciSilDTO etkinliktenKullaniciSilDTO)
-        {
-            string? mevcutKullaniciID = User.Identity?.Name;
-            if (mevcutKullaniciID == null) return Unauthorized();
-
-            if (etkinliktenKullaniciSilDTO == null) return BadRequest();
-
-            await _etkinlikServisi.EtkinliktenKullaniciSil(etkinliktenKullaniciSilDTO, mevcutKullaniciID);
-            return Ok();
-        }
-
-
-        [HttpGet("{etkinlikID}")]
-        public async Task<IActionResult> EtkinlikKullanicilariGetir(int etkinlikID)
-        {
-            string? mevcutKullaniciID = User.Identity?.Name;
-            if (mevcutKullaniciID == null) return Unauthorized();
-
-            IEnumerable<KullaniciGetirDTO> kullanicilar = await _etkinlikServisi.EtkinlikKullanicilariGetir(etkinlikID, mevcutKullaniciID);
-            if (kullanicilar == null) return NotFound();
-
-            return Ok(kullanicilar);
         }
 
 
@@ -82,19 +57,44 @@ namespace ActivityCalender.API.Controllers
         }
 
 
-        [HttpPut]
-        public async Task<IActionResult> EtkinlikGuncelle([FromBody] EtkinlikGuncelleDTO etkinlikGuncelleDTO)
+        [HttpPost]
+        public async Task<IActionResult> EtkinligeKullaniciEkle([FromBody] EtkinlikKullaniciEkleDTO etkinlikKullaniciEkleDTO)
         {
             string? mevcutKullaniciID = User.Identity?.Name;
             if (mevcutKullaniciID == null) return Unauthorized();
 
-            if (etkinlikGuncelleDTO == null) return BadRequest();
+            if (etkinlikKullaniciEkleDTO == null) return BadRequest();
 
-            await _etkinlikServisi.EtkinlikGuncelle(etkinlikGuncelleDTO, mevcutKullaniciID);
-
+            await _etkinlikServisi.EtkinligeKullaniciEkle(etkinlikKullaniciEkleDTO, mevcutKullaniciID);
             return Ok();
         }
 
+
+        [HttpDelete]
+        public async Task<IActionResult> EtkinliktenDavetliKullanicilariSil([FromBody] EtkinliktenKullaniciSilDTO etkinliktenKullaniciSilDTO)
+        {
+            string? mevcutKullaniciID = User.Identity?.Name;
+            if (mevcutKullaniciID == null) return Unauthorized();
+
+            if (etkinliktenKullaniciSilDTO == null) return BadRequest();
+
+            await _etkinlikServisi.EtkinliktenDavetliKullanicilariSil(etkinliktenKullaniciSilDTO, mevcutKullaniciID);
+            return Ok();
+        }
+
+
+        [HttpGet("{etkinlikID}")]
+        public async Task<IActionResult> EtkinligeDavetliKullanicilariGetir(int etkinlikID)
+        {
+            string? mevcutKullaniciID = User.Identity?.Name;
+            if (mevcutKullaniciID == null) return Unauthorized();
+
+            IEnumerable<KullaniciGetirDTO> kullanicilar = await _etkinlikServisi.EtkinligeDavetliKullanicilariGetir(etkinlikID, mevcutKullaniciID);
+            if (kullanicilar == null) return NotFound();
+
+            return Ok(kullanicilar);
+        }
+        
 
         [HttpGet("{etkinlikID}")]
         public async Task<IActionResult> KullaniciEtkinligiGetir(int etkinlikID)

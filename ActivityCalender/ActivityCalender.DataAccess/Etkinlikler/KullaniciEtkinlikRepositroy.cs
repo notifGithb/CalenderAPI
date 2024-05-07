@@ -27,13 +27,13 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             await _context.SaveChangesAsync();
         }
 
-        public async Task KullaniciEtkinlikleriSil(List<KullaniciEtkinlik> kullaniciEtkinliks)
+        public async Task EtkinliktenDavetliKullanicilariSil(List<KullaniciEtkinlik> kullaniciEtkinliks)
         {
             _context.KullaniciEtkinliks.RemoveRange(kullaniciEtkinliks);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Kullanici>> EtkinlikKullanicilariGetir(int etkinlikID)
+        public async Task<IEnumerable<Kullanici>> EtkinligeDavetliKullanicilariGetir(int etkinlikID)
         {
             return await _context.KullaniciEtkinliks
                 .Where(e => e.EtkinlikId == etkinlikID)

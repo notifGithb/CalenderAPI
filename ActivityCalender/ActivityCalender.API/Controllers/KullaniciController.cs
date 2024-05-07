@@ -42,7 +42,7 @@ namespace ActivityCalender.API.Controllers
 
             if (mevcutKullaniciID == null) return Unauthorized();
 
-            IEnumerable<KullaniciGetirDTO>? kullanicilar = await _kullaniciServisi.KullanicilariGetir(mevcutKullaniciID);
+            IEnumerable<KullaniciGetirDTO> kullanicilar = await _kullaniciServisi.KullanicilariGetir(mevcutKullaniciID);
 
             if (kullanicilar.Any())
             {
