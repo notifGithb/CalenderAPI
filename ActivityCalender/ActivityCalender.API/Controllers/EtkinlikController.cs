@@ -90,11 +90,11 @@ namespace ActivityCalender.API.Controllers
             if (mevcutKullaniciID == null) return Unauthorized();
 
             IEnumerable<KullaniciGetirDTO> kullanicilar = await _etkinlikServisi.EtkinligeDavetliKullanicilariGetir(etkinlikID, mevcutKullaniciID);
-            if (kullanicilar == null) return NotFound();
+            if (!kullanicilar.Any()) return NotFound();
 
             return Ok(kullanicilar);
         }
-        
+
 
         [HttpGet("{etkinlikID}")]
         public async Task<IActionResult> KullaniciEtkinligiGetir(int etkinlikID)
