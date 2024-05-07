@@ -53,8 +53,8 @@ namespace ActivityCalender.DataAccess.Etkinlikler
         public async Task<bool> EtkinlikTarihKontrol(Etkinlik etkinlik)
         {
 
-            DateTime yeniBaslangicTarihi = DateTime.ParseExact(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-            DateTime yeniBitisTarihi = DateTime.ParseExact(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            DateTime yeniBaslangicTarihi = DateTime.Parse(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati);
+            DateTime yeniBitisTarihi = DateTime.Parse(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati);
 
             var mevcutEtkinlikler = await _context.Etkinliks.AsNoTracking().Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId).ToListAsync();
 
@@ -63,8 +63,8 @@ namespace ActivityCalender.DataAccess.Etkinlikler
 
             //Veritabanına kayıtlı etkinlikler arasında yeni eklenecek etkinlikle aynı zaman dilimine ait etkinlik olup olmadığı kontrol edilirx.
             bool gecerli = mevcutEtkinlikler.Any(e =>
-                DateTime.ParseExact(e.BaslangicTarihi + " " + e.BaslangicSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) < yeniBitisTarihi &&
-                yeniBaslangicTarihi < DateTime.ParseExact(e.BitisTarihi + " " + e.BitisSaati, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture)
+                DateTime.Parse(e.BaslangicTarihi + " " + e.BaslangicSaati) < yeniBitisTarihi &&
+                yeniBaslangicTarihi < DateTime.Parse(e.BitisTarihi + " " + e.BitisSaati)
             );
 
             return gecerli;

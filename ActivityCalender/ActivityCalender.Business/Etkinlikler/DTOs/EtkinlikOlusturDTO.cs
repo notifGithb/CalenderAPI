@@ -14,10 +14,10 @@ namespace ActivityCalender.Business.Etkinlikler.DTOs
         [DefaultValue("00:00")]
         public required string BitisSaati { get; set; }
 
-        [DefaultValue("01/01/0001")]
+        [DefaultValue("0001-01-01")]
         public required string BaslangicTarihi { get; set; }
 
-        [DefaultValue("01/01/0001")]
+        [DefaultValue("0001-01-01")]
         public required string BitisTarihi { get; set; }
         public TekrarEnum TekrarDurumu { get; set; }
     }

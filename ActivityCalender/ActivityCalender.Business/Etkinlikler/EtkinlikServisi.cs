@@ -198,7 +198,7 @@ namespace ActivityCalender.Business.Etkinlikler
 
             if (DateTime.TryParse(baslangic, out _) && DateTime.TryParse(bitis, out _))
             {
-                if (DateTime.ParseExact(baslangic, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) < DateTime.ParseExact(bitis, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture))
+                if (DateTime.Parse(baslangic) < DateTime.Parse(bitis))
                 {
                     return true;
                 }
