@@ -1,15 +1,14 @@
 ﻿using ActivityCalender.DataAccess.Repository;
 using ActivityCalender.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace ActivityCalender.DataAccess.Etkinlikler
 {
-    public class EtkinlikRepository : GenericRepository<Etkinlik>, IEtkinlikRepository
+    public class EtkinlikRepository : IEtkinlikRepository
     {
         private readonly ActivityCalenderContext _context;
 
-        public EtkinlikRepository(ActivityCalenderContext context) : base(context)
+        public EtkinlikRepository(ActivityCalenderContext context)
         {
             _context = context;
         }

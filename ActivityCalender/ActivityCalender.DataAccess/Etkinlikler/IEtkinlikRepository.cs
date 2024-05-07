@@ -1,9 +1,8 @@
-﻿using ActivityCalender.DataAccess.Repository;
-using ActivityCalender.Entities;
+﻿using ActivityCalender.Entities;
 
 namespace ActivityCalender.DataAccess.Etkinlikler
 {
-    public interface IEtkinlikRepository : IGenericRepository<Etkinlik>
+    public interface IEtkinlikRepository
     {
         Task EtkinlikOlustur(Etkinlik etkinlik);
         Task EtkinlikGuncelle(Etkinlik etkinlik);
