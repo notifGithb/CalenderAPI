@@ -55,7 +55,7 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             DateTime yeniBaslangicTarihi = DateTime.Parse(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati);
             DateTime yeniBitisTarihi = DateTime.Parse(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati);
 
-            var mevcutEtkinlikler = await _context.Etkinliks.AsNoTracking().Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId).ToListAsync();
+            var mevcutEtkinlikler = await _context.Etkinliks.AsNoTracking().Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId && e.Id != etkinlik.Id).ToListAsync();
 
             //Kullanıcının hiç etkinlik oluşturmadığı durum.
             if (!mevcutEtkinlikler.Any()) return false;
