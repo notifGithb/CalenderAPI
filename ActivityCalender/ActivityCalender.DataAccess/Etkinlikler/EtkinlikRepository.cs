@@ -18,12 +18,12 @@ namespace ActivityCalender.DataAccess.Etkinlikler
         public async Task<bool> EtkinlikTarihKontrol(Etkinlik etkinlik)
         {
             // Tarih ve saat formatlarını kontrol et
-            if (!DateTime.TryParseExact(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime yeniBaslangicTarihi))
+            if (!DateTime.TryParseExact(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime yeniBaslangicTarihi))
             {
                 throw new Exception("Başlangıç Tarihi ve Saati Doğrulanamadı.");
             }
 
-            if (!DateTime.TryParseExact(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime yeniBitisTarihi))
+            if (!DateTime.TryParseExact(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime yeniBitisTarihi))
             {
                 throw new Exception("Bitiş Tarihi ve Saati Doğrulanamadı.");
             }
@@ -49,8 +49,8 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             //Kayıt edilmek istenen etkinliğin zaman aralığında veritabanında etkinlik kaydının olup olmadığı kontrol edilir.
             bool gecerli = mevcutEtkinlikler.Any(e =>
             {
-                DateTime.TryParseExact(e.BaslangicTarihi + " " + e.BaslangicSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime baslangic);
-                DateTime.TryParseExact(e.BitisTarihi + " " + e.BitisSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime bitis);
+                DateTime.TryParseExact(e.BaslangicTarihi + " " + e.BaslangicSaati, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime baslangic);
+                DateTime.TryParseExact(e.BitisTarihi + " " + e.BitisSaati, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime bitis);
 
                 return
                 (yeniBaslangicTarihi <= baslangic && (bitis <= yeniBitisTarihi || yeniBitisTarihi < bitis) && baslangic <= yeniBitisTarihi) ||
