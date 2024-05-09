@@ -1,6 +1,7 @@
 ﻿using ActivityCalender.DataAccess.Repository;
 using ActivityCalender.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace ActivityCalender.DataAccess.Etkinlikler
 {
@@ -14,25 +15,50 @@ namespace ActivityCalender.DataAccess.Etkinlikler
         }
 
 
-        //Yeni eklenecek etkinliğin saaat aralığının daha önce eklenen bir etkinlikle çakışıp çakışmadığı kontrol edilir. Çakışırsa true çakışmazsa false döner.
         public async Task<bool> EtkinlikTarihKontrol(Etkinlik etkinlik)
         {
+            // Tarih ve saat formatlarını kontrol et
+            if (!DateTime.TryParseExact(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime yeniBaslangicTarihi))
+            {
+                throw new Exception("Başlangıç Tarihi ve Saati Doğrulanamadı.");
+            }
 
-            DateTime yeniBaslangicTarihi = DateTime.Parse(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati);
-            DateTime yeniBitisTarihi = DateTime.Parse(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati);
+            if (!DateTime.TryParseExact(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime yeniBitisTarihi))
+            {
+                throw new Exception("Bitiş Tarihi ve Saati Doğrulanamadı.");
+            }
 
-            var mevcutEtkinlikler = await _context.Etkinliks.Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId && e.Id != etkinlik.Id).AsNoTracking().ToListAsync();
+            // Başlangıç tarihinin bitiş tarihinden önce olduğundan emin ol
+            if (yeniBaslangicTarihi >= yeniBitisTarihi)
+            {
+                throw new Exception("Başlangıç Tarihi Bitiş Tarihinden Sonra ve Aynı Olamaz.");
+            }
 
-            //Kullanıcının hiç etkinlik oluşturmadığı durum.
-            if (!mevcutEtkinlikler.Any()) return false;
+            // Mevcut etkinlikleri getir
+            var mevcutEtkinlikler = await _context.Etkinliks
+                .Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId && e.Id != etkinlik.Id)
+                .AsNoTracking()
+                .ToListAsync();
 
-            //Veritabanına kayıtlı etkinlikler arasında yeni eklenecek etkinlikle aynı zaman dilimine ait etkinlik olup olmadığı kontrol edilirx.
+            // Kullanıcının hiç etkinliği yoksa, yeni etkinlik eklenebilir
+            if (!mevcutEtkinlikler.Any())
+            {
+                return true;
+            }
+
+            //Kayıt edilmek istenen etkinliğin zaman aralığında veritabanında etkinlik kaydının olup olmadığı kontrol edilir.
             bool gecerli = mevcutEtkinlikler.Any(e =>
-                DateTime.Parse(e.BaslangicTarihi + " " + e.BaslangicSaati) < yeniBitisTarihi &&
-                yeniBaslangicTarihi < DateTime.Parse(e.BitisTarihi + " " + e.BitisSaati)
-            );
+            {
+                DateTime.TryParseExact(e.BaslangicTarihi + " " + e.BaslangicSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime baslangic);
+                DateTime.TryParseExact(e.BitisTarihi + " " + e.BitisSaati, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime bitis);
 
-            return gecerli;
+                return
+                (yeniBaslangicTarihi <= baslangic && (bitis <= yeniBitisTarihi || yeniBitisTarihi < bitis) && baslangic <= yeniBitisTarihi) ||
+                (baslangic <= yeniBaslangicTarihi && (bitis < yeniBitisTarihi || yeniBitisTarihi <= bitis) && yeniBaslangicTarihi <= bitis);
+
+            });
+
+            return !gecerli;
         }
     }
 }

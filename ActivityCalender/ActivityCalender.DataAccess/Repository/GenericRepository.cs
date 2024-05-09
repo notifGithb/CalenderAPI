@@ -38,21 +38,6 @@ namespace ActivityCalender.DataAccess.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await Entity.AsNoTracking().ToListAsync();
-        }
-
-        public async Task<IEnumerable<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await Entity.Where(predicate).AsNoTracking().ToListAsync();
-        }
-
-        public async Task<T> GetWhereAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await Entity.AsNoTracking().FirstOrDefaultAsync(predicate);
-        }
-
         public async Task Update(T entity)
         {
             Entity.Update(entity);
@@ -65,11 +50,28 @@ namespace ActivityCalender.DataAccess.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await Entity.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetAllWhereAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await Entity.Where(predicate).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<T?> GetWhereAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await Entity.AsNoTracking().FirstOrDefaultAsync(predicate);
+        }
+
+        //belirli bir koşula göre kontrol 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression)
         {
             return await Entity.AnyAsync(expression);
         }
 
+        //öğe referansıyla kontrol
         public async Task<bool> ContainsAsync(T entity)
         {
             return await Entity.ContainsAsync(entity);

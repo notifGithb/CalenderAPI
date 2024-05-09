@@ -32,24 +32,20 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                if (TarihDogrula(etkinlikOlusturDTO.BaslangicTarihi, etkinlikOlusturDTO.BaslangicSaati, etkinlikOlusturDTO.BitisTarihi, etkinlikOlusturDTO.BitisSaati))
+                Etkinlik etkinlikOlustur = _mapper.Map<Etkinlik>(etkinlikOlusturDTO);
+                etkinlikOlustur.OlusturanKullaniciId = mevcutKullaniciID;
+
+                if (await _etkinlikRepository.EtkinlikTarihKontrol(etkinlikOlustur))
                 {
-                    Etkinlik etkinlikOlustur = _mapper.Map<Etkinlik>(etkinlikOlusturDTO);
-                    etkinlikOlustur.OlusturanKullaniciId = mevcutKullaniciID;
-
-                    if (await _etkinlikRepository.EtkinlikTarihKontrol(etkinlikOlustur)) throw new Exception("Girilen Tarih Araliginda Etkinlik Kaydi Bulunmaktadir.");
-
-                    //await _etkinlikRepository.EtkinlikOlustur(etkinlikOlustur);
                     await _etkinlikRepository.AddAsync(etkinlikOlustur);
                 }
                 else
                 {
-                    throw new Exception("Tarih ve Zaman Bilgileri Doğrulanamadı.");
+                    throw new Exception("Girilen Tarih Araliginda Etkinlik Kaydi Bulunmaktadir.");
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -60,7 +56,6 @@ namespace ActivityCalender.Business.Etkinlikler
             {
                 Etkinlik? etkinlikSil = await _etkinlikRepository.GetWhereAsync(e => e.Id == etkinlikID && e.OlusturanKullaniciId == mevcutKullaniciID) ?? throw new Exception("Kullanıcını Silinecek Etkinlik Kaydı Bulunamadı.");
 
-                //await _etkinlikRepository.EtkinlikSil(etkinlikSil);
                 await _etkinlikRepository.Remove(etkinlikSil);
             }
             catch (Exception)
@@ -73,20 +68,18 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                if (TarihDogrula(etkinlikGuncelleDTO.BaslangicTarihi, etkinlikGuncelleDTO.BaslangicSaati, etkinlikGuncelleDTO.BitisTarihi, etkinlikGuncelleDTO.BitisSaati))
+                Etkinlik etkinlikGuncelle = _mapper.Map<Etkinlik>(etkinlikGuncelleDTO);
+                etkinlikGuncelle.OlusturanKullaniciId = mevcutKullaniciID;
+
+                if (!await _etkinlikRepository.AnyAsync(e => e.Id == etkinlikGuncelleDTO.Id && e.OlusturanKullaniciId == mevcutKullaniciID)) throw new Exception("Guncellenecek Etkinlik Kaydi Bulunamadi.");
+
+                if (await _etkinlikRepository.EtkinlikTarihKontrol(etkinlikGuncelle))
                 {
-                    Etkinlik? etkinlik = await _etkinlikRepository.GetWhereAsync(e => e.Id == etkinlikGuncelleDTO.Id && e.OlusturanKullaniciId == mevcutKullaniciID) ?? throw new Exception("Guncellenecek Etkinlik Kaydi Bulunamadi.");
-
-                    Etkinlik etkinlikGuncelle = _mapper.Map<Etkinlik>(etkinlikGuncelleDTO);
-                    etkinlikGuncelle.OlusturanKullaniciId = mevcutKullaniciID;
-
-                    if (await _etkinlikRepository.EtkinlikTarihKontrol(etkinlikGuncelle)) throw new Exception("Girilen Tarih Araliginda Etkinlik Kaydi Bulunmaktadir.");
-
                     await _etkinlikRepository.Update(etkinlikGuncelle);
                 }
                 else
                 {
-                    throw new Exception("Tarih ve Saat Format Hatası.");
+                    throw new Exception("Girilen Tarih Araliginda Etkinlik Kaydi Bulunmaktadir.");
                 }
             }
             catch (Exception)
@@ -105,15 +98,15 @@ namespace ActivityCalender.Business.Etkinlikler
             return _mapper.Map<IEnumerable<EtkinlikGetirDTO>>(await _etkinlikRepository.GetAllWhereAsync(e => e.OlusturanKullaniciId == mevcutKullaniciID));
         }
 
-        public async Task EtkinligeKullaniciEkle(EtkinligeKullaniciEkleDTO etkinlikKullaniciEkleDTO, string mevcutKullaniciID)
+        public async Task EtkinligeKullaniciEkle(EtkinligeKullaniciEkleDTO etkinligeKullaniciEkleDTO, string mevcutKullaniciID)
         {
             try
             {
-                List<KullaniciEtkinlik> kullaniciEtkinlikListesi = new();
-
-                if (await _etkinlikRepository.GetWhereAsync(e => e.OlusturanKullaniciId == mevcutKullaniciID && e.Id == etkinlikKullaniciEkleDTO.EtkinlikId) != null)
+                if (await _etkinlikRepository.AnyAsync(e => e.OlusturanKullaniciId == mevcutKullaniciID && e.Id == etkinligeKullaniciEkleDTO.EtkinlikId))
                 {
-                    foreach (var kullaniciId in etkinlikKullaniciEkleDTO.KullaniciIds)
+                    List<KullaniciEtkinlik> kullaniciEtkinlikListesi = new();
+
+                    foreach (var kullaniciId in etkinligeKullaniciEkleDTO.KullaniciIds)
                     {
 
                         if (await _kullaniciRepository.GetWhereAsync(k => k.Id == kullaniciId) != null)
@@ -121,7 +114,7 @@ namespace ActivityCalender.Business.Etkinlikler
                             KullaniciEtkinlik kullaniciEtkinlik = new()
                             {
                                 KullaniciId = kullaniciId,
-                                EtkinlikId = etkinlikKullaniciEkleDTO.EtkinlikId
+                                EtkinlikId = etkinligeKullaniciEkleDTO.EtkinlikId
                             };
                             kullaniciEtkinlikListesi.Add(kullaniciEtkinlik);
                         }
@@ -143,9 +136,10 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                if (await _etkinlikRepository.GetAllWhereAsync(e => e.Id == etkinliktenKullaniciSilDTO.EtkinlikID && e.OlusturanKullaniciId == mevcutKullaniciID) != null)
+                if (await _etkinlikRepository.AnyAsync(e => e.Id == etkinliktenKullaniciSilDTO.EtkinlikID && e.OlusturanKullaniciId == mevcutKullaniciID))
                 {
                     List<KullaniciEtkinlik> kullaniciEtkinlikListesi = new();
+
                     foreach (var kullaniciId in etkinliktenKullaniciSilDTO.KullaniciIDs)
                     {
 
@@ -170,7 +164,7 @@ namespace ActivityCalender.Business.Etkinlikler
         {
             try
             {
-                if (await _etkinlikRepository.GetAllWhereAsync(e => e.Id == etkinlikID && e.OlusturanKullaniciId == mevcutKullaniciID) != null)
+                if (await _etkinlikRepository.AnyAsync(e => e.Id == etkinlikID && e.OlusturanKullaniciId == mevcutKullaniciID))
                 {
                     return _mapper.Map<IEnumerable<KullaniciGetirDTO>>(await _kullaniciEtkinlikRepositroy.EtkinligeDavetliKullanicilariGetir(etkinlikID));
                 }
@@ -190,23 +184,28 @@ namespace ActivityCalender.Business.Etkinlikler
             return _mapper.Map<IEnumerable<EklenenEtkinlikleriGetirDTO>>(await _kullaniciEtkinlikRepositroy.EklenenEtkinlikleriGetir(mevcutKullaniciID));
         }
 
-        private static bool TarihDogrula(string baslangicTarihi, string baslangicSaati, string bitisTarihi, string bitisSaati)
-        {
-            string baslangic = $"{baslangicTarihi} {baslangicSaati}";
-            string bitis = $"{bitisTarihi} {bitisSaati}";
 
-            if (DateTime.TryParse(baslangic, out _) && DateTime.TryParse(bitis, out _))
-            {
-                if (DateTime.Parse(baslangic) < DateTime.Parse(bitis))
-                {
-                    return true;
-                }
-                return false;
-            }
-            else
-            {
-                return false;
-            }
-        }
+
+
+
+
+        //private static bool EtkinlikTarihiDogrula(Etkinlik etkinlik)
+        //{
+        //    string baslangic = $"{etkinlik.BaslangicTarihi} {etkinlik.BaslangicSaati}";
+        //    string bitis = $"{etkinlik.BitisTarihi} {etkinlik.BitisSaati}";
+
+        //    if (DateTime.TryParse(baslangic, out _) && DateTime.TryParse(bitis, out _))
+        //    {
+        //        if (DateTime.Parse(baslangic) < DateTime.Parse(bitis))
+        //        {
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
     }
 }
