@@ -1,10 +1,9 @@
 ﻿using ActivityCalender.Business.OturumYonetimi.DTOs;
 using ActivityCalender.Business.OturumYonetimi.JWT;
 using ActivityCalender.Business.OturumYonetimi.JWT.Token;
-using ActivityCalender.DataAccess;
+using ActivityCalender.DataAccess.Kullanicilar;
 using ActivityCalender.Entities;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,28 +12,27 @@ namespace ActivityCalender.Business.OturumYonetimi
     public class OturumYonetimi : IOturumYonetimi
     {
         private readonly IMapper _mapper;
-        private readonly ActivityCalenderContext _context;
         private readonly IJwtServisi _jwtServisi;
+        private readonly IKullaniciRepository _kullaniciRepository;
 
-        public OturumYonetimi(IMapper mapper, ActivityCalenderContext context, IJwtServisi jwtServisi)
+        public OturumYonetimi(IMapper mapper, IJwtServisi jwtServisi, IKullaniciRepository kullaniciRepository)
         {
             _mapper = mapper;
-            _context = context;
             _jwtServisi = jwtServisi;
+            _kullaniciRepository = kullaniciRepository;
         }
 
         public async Task<JwtToken?> GirisYap(KullaniciGirisDto model)
         {
             try
             {
-                var sha = SHA256.Create();
                 var byteArray = Encoding.Default.GetBytes(model.KullaniciSifresi);
-                var hashedSifre = Convert.ToBase64String(sha.ComputeHash(byteArray));
+                var hashedSifre = Convert.ToBase64String(SHA256.HashData(byteArray));
 
                 model.KullaniciSifresi = hashedSifre;
                 model.KullaniciAdi = model.KullaniciAdi.Trim().ToLower();
 
-                Kullanici? kullanici = await _context.Kullanicis.Where(k => k.KullaniciSifresi == model.KullaniciSifresi && k.KullaniciAdi == model.KullaniciAdi).FirstOrDefaultAsync();
+                Kullanici? kullanici = await _kullaniciRepository.GetWhereAsync(k => k.KullaniciAdi == model.KullaniciAdi && k.KullaniciSifresi == model.KullaniciSifresi);
                 if (kullanici == null)
                 {
                     return null;
@@ -46,7 +44,6 @@ namespace ActivityCalender.Business.OturumYonetimi
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -59,7 +56,9 @@ namespace ActivityCalender.Business.OturumYonetimi
                 {
                     throw new ArgumentNullException(nameof(model), "Model boş olamaz.");
                 }
-                var mevcutKullanici = await _context.Kullanicis.FirstOrDefaultAsync(k => k.KullaniciAdi == model.KullaniciAdi);
+
+                var mevcutKullanici = await _kullaniciRepository.GetWhereAsync(k => k.KullaniciAdi == model.KullaniciAdi);
+
                 if (mevcutKullanici != null)
                 {
                     throw new ArgumentException("Bu kullanıcı adı mevcut.", model.KullaniciAdi);
@@ -67,13 +66,12 @@ namespace ActivityCalender.Business.OturumYonetimi
                 model.KullaniciAdi = model.KullaniciAdi.Trim().ToLower();
                 Kullanici yeniKullanici = _mapper.Map<Kullanici>(model);
 
-                var sha = SHA256.Create();
                 var byteArray = Encoding.Default.GetBytes(yeniKullanici.KullaniciSifresi);
-                var hashedSifre = Convert.ToBase64String(sha.ComputeHash(byteArray));
+                var hashedSifre = Convert.ToBase64String(SHA256.HashData(byteArray));
 
                 yeniKullanici.KullaniciSifresi = hashedSifre;
-                await _context.Kullanicis.AddAsync(yeniKullanici);
-                await _context.SaveChangesAsync();
+
+                await _kullaniciRepository.AddAsync(yeniKullanici);
 
             }
             catch (ArgumentNullException)

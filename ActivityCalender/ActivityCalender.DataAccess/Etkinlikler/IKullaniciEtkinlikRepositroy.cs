@@ -1,13 +1,10 @@
-﻿using ActivityCalender.Entities;
+﻿using ActivityCalender.DataAccess.Repository;
+using ActivityCalender.Entities;
 
 namespace ActivityCalender.DataAccess.Etkinlikler
 {
-    public interface IKullaniciEtkinlikRepositroy
+    public interface IKullaniciEtkinlikRepositroy : IGenericRepository<KullaniciEtkinlik>
     {
-        Task KullaniciEtkinlikEkle(List<KullaniciEtkinlik> kullaniciEtkinliks);
-        Task KullaniciEtkinlikGuncelle(KullaniciEtkinlik kullaniciEtkinlik);
-        Task EtkinliktenDavetliKullanicilariSil(List<KullaniciEtkinlik> kullaniciEtkinliks);
-        Task<KullaniciEtkinlik?> EtkinlikKullaniciGetir(int etkinlikID, string kullaniciID);
         Task<IEnumerable<Kullanici>> EtkinligeDavetliKullanicilariGetir(int etkinlikID);
         Task<IEnumerable<Etkinlik>> EklenenEtkinlikleriGetir(string mevcutKullaniciID);
 

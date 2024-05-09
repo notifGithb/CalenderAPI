@@ -4,49 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ActivityCalender.DataAccess.Etkinlikler
 {
-    public class EtkinlikRepository : IEtkinlikRepository
+    public class EtkinlikRepository : GenericRepository<Etkinlik>, IEtkinlikRepository
     {
         private readonly ActivityCalenderContext _context;
 
-        public EtkinlikRepository(ActivityCalenderContext context)
+        public EtkinlikRepository(ActivityCalenderContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task EtkinlikOlustur(Etkinlik etkinlik)
-        {
-            _context.Etkinliks.Add(etkinlik);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task EtkinlikSil(Etkinlik etkinlik)
-        {
-            _context.Etkinliks.Remove(etkinlik);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task EtkinlikGuncelle(Etkinlik etkinlik)
-        {
-            _context.Etkinliks.Update(etkinlik);
-            await _context.SaveChangesAsync();
-        }
-
-
-        public async Task<IEnumerable<Etkinlik>> KullaniciEtkinlikleriGetir(string kullaniciID)
-        {
-            return await _context.Etkinliks
-                .AsNoTracking()
-                .Where(e => e.OlusturanKullaniciId == kullaniciID)
-                .ToListAsync();
-        }
-
-        public async Task<Etkinlik?> KullaniciEtkinligiGetir(int etkinlikID, string kullaniciID)
-        {
-            return await _context.Etkinliks
-                .AsNoTracking()
-                .Where(e => e.Id == etkinlikID && e.OlusturanKullaniciId == kullaniciID)
-                .FirstOrDefaultAsync();
-        }
 
         //Yeni eklenecek etkinliğin saaat aralığının daha önce eklenen bir etkinlikle çakışıp çakışmadığı kontrol edilir. Çakışırsa true çakışmazsa false döner.
         public async Task<bool> EtkinlikTarihKontrol(Etkinlik etkinlik)
@@ -55,7 +21,7 @@ namespace ActivityCalender.DataAccess.Etkinlikler
             DateTime yeniBaslangicTarihi = DateTime.Parse(etkinlik.BaslangicTarihi + " " + etkinlik.BaslangicSaati);
             DateTime yeniBitisTarihi = DateTime.Parse(etkinlik.BitisTarihi + " " + etkinlik.BitisSaati);
 
-            var mevcutEtkinlikler = await _context.Etkinliks.AsNoTracking().Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId && e.Id != etkinlik.Id).ToListAsync();
+            var mevcutEtkinlikler = await _context.Etkinliks.Where(e => e.OlusturanKullaniciId == etkinlik.OlusturanKullaniciId && e.Id != etkinlik.Id).AsNoTracking().ToListAsync();
 
             //Kullanıcının hiç etkinlik oluşturmadığı durum.
             if (!mevcutEtkinlikler.Any()) return false;

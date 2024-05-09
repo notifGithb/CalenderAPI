@@ -1,11 +1,7 @@
-﻿using ActivityCalender.Entities;
+﻿using ActivityCalender.DataAccess.Repository;
+using ActivityCalender.Entities;
 
 namespace ActivityCalender.DataAccess.Kullanicilar
 {
-    public interface IKullaniciRepository
-    {
-        Task<Kullanici?> KullaniciGetir(string kullaniciID);
-        Task<IEnumerable<Kullanici>> KullanicilariGetir(string kullaniciID);
-
-    }
+    public interface IKullaniciRepository : IGenericRepository<Kullanici> { }
 }

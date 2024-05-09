@@ -58,7 +58,7 @@ namespace ActivityCalender.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> EtkinligeKullaniciEkle([FromBody] EtkinlikKullaniciEkleDTO etkinlikKullaniciEkleDTO)
+        public async Task<IActionResult> EtkinligeKullaniciEkle([FromBody] EtkinligeKullaniciEkleDTO etkinlikKullaniciEkleDTO)
         {
             string? mevcutKullaniciID = User.Identity?.Name;
             if (mevcutKullaniciID == null) return Unauthorized();
